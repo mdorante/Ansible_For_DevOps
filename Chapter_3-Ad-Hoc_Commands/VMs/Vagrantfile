@@ -1,0 +1,28 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+  config.ssh.insert_key = false
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 256
+    vb.linked_clone = true
+  end
+
+  # App Server 1
+  config.vm.define "app1" do |app|
+    app.vm.hostname = "app1.test"
+    app.vm.network "private_network", ip: "192.168.100.10"
+  end
+
+  # App Server 2
+  config.vm.define "app2" do |app|
+    app.vm.hostname = "app2.test"
+    app.vm.network "private_network", ip: "192.168.100.11"
+  end
+
+  # App Server 2
+  config.vm.define "db1" do |db|
+    db.vm.hostname = "db1.test"
+    db.vm.network "private_network", ip: "192.168.100.12"
+  end
+end
