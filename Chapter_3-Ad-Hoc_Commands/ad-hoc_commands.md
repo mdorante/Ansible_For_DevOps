@@ -1571,3 +1571,555 @@ At this point, you can deploy a Django app to the `app` servers and point it to 
 
 ```
 
+### Manage Users and Groups
+
+- Add an `admin` group on the `app` servers for SysAdmins
+
+```console
+❯ ansible app -b -m group -a "name=admin state=present"
+192.168.100.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "gid": 1001,
+    "name": "admin",
+    "state": "present",
+    "system": false
+}
+192.168.100.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "gid": 1001,
+    "name": "admin",
+    "state": "present",
+    "system": false
+}
+```
+
+- Add the user `johndoe` and create a home folder for the user
+
+```console
+❯ ansible app -b -m user -a "name=johndoe group=admin state=present createhome=yes"
+192.168.100.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "comment": "",
+    "create_home": true,
+    "group": 1001,
+    "home": "/home/johndoe",
+    "name": "johndoe",
+    "shell": "/bin/bash",
+    "state": "present",
+    "system": false,
+    "uid": 1001
+}
+192.168.100.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "comment": "",
+    "create_home": true,
+    "group": 1001,
+    "home": "/home/johndoe",
+    "name": "johndoe",
+    "shell": "/bin/bash",
+    "state": "present",
+    "system": false,
+    "uid": 1001
+}
+```
+
+- Delete the account
+
+```console
+❯ ansible app -b -m user -a "name=johndoe state=absent remove=yes"
+192.168.100.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "force": false,
+    "name": "johndoe",
+    "remove": true,
+    "state": "absent"
+}
+192.168.100.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "force": false,
+    "name": "johndoe",
+    "remove": true,
+    "state": "absent"
+}
+```
+
+### Manage Packages
+
+- Install `git` on any OS
+
+```console
+❯ ansible app -b -m package -a "name=git state=latest"
+192.168.100.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "changes": {
+        "installed": [
+            "git"
+        ],
+        "updated": []
+    },
+    "msg": "",
+    "rc": 0,
+    "results": [
+        "Loaded plugins: fastestmirror\nLoading mirror speeds from cached hostfile\n * base: centos.mirror.py\n * extras: centos.mirror.py\n * updates: centos.mirror.py\nResolving Dependencies\n--> Running transaction check\n---> Package git.x86_64 0:1.8.3.1-23.el7_8 will be installed\n--> Processing Dependency: perl-Git = 1.8.3.1-23.el7_8 for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl >= 5.008 for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(warnings) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(vars) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(strict) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(lib) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(Term::ReadKey) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(Git) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(Getopt::Long) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::stat) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Temp) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Spec) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Path) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Find) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Copy) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Basename) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(Exporter) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(Error) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: /usr/bin/perl for package: git-1.8.3.1-23.el7_8.x86_64\n--> Running transaction check\n---> Package perl.x86_64 4:5.16.3-295.el7 will be installed\n--> Processing Dependency: perl-libs = 4:5.16.3-295.el7 for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Socket) >= 1.3 for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Scalar::Util) >= 1.10 for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl-macros for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl-libs for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(threads::shared) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(threads) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(constant) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Time::Local) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Time::HiRes) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Storable) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Socket) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Scalar::Util) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Pod::Simple::XHTML) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Pod::Simple::Search) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Filter::Util::Call) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Carp) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: libperl.so()(64bit) for package: 4:perl-5.16.3-295.el7.x86_64\n---> Package perl-Error.noarch 1:0.17020-2.el7 will be installed\n---> Package perl-Exporter.noarch 0:5.68-3.el7 will be installed\n---> Package perl-File-Path.noarch 0:2.09-2.el7 will be installed\n---> Package perl-File-Temp.noarch 0:0.23.01-3.el7 will be installed\n---> Package perl-Getopt-Long.noarch 0:2.40-3.el7 will be installed\n--> Processing Dependency: perl(Pod::Usage) >= 1.14 for package: perl-Getopt-Long-2.40-3.el7.noarch\n--> Processing Dependency: perl(Text::ParseWords) for package: perl-Getopt-Long-2.40-3.el7.noarch\n---> Package perl-Git.noarch 0:1.8.3.1-23.el7_8 will be installed\n---> Package perl-PathTools.x86_64 0:3.40-5.el7 will be installed\n---> Package perl-TermReadKey.x86_64 0:2.30-20.el7 will be installed\n--> Running transaction check\n---> Package perl-Carp.noarch 0:1.26-244.el7 will be installed\n---> Package perl-Filter.x86_64 0:1.49-3.el7 will be installed\n---> Package perl-Pod-Simple.noarch 1:3.28-4.el7 will be installed\n--> Processing Dependency: perl(Pod::Escapes) >= 1.04 for package: 1:perl-Pod-Simple-3.28-4.el7.noarch\n--> Processing Dependency: perl(Encode) for package: 1:perl-Pod-Simple-3.28-4.el7.noarch\n---> Package perl-Pod-Usage.noarch 0:1.63-3.el7 will be installed\n--> Processing Dependency: perl(Pod::Text) >= 3.15 for package: perl-Pod-Usage-1.63-3.el7.noarch\n--> Processing Dependency: perl-Pod-Perldoc for package: perl-Pod-Usage-1.63-3.el7.noarch\n---> Package perl-Scalar-List-Utils.x86_64 0:1.27-248.el7 will be installed\n---> Package perl-Socket.x86_64 0:2.010-5.el7 will be installed\n---> Package perl-Storable.x86_64 0:2.45-3.el7 will be installed\n---> Package perl-Text-ParseWords.noarch 0:3.29-4.el7 will be installed\n---> Package perl-Time-HiRes.x86_64 4:1.9725-3.el7 will be installed\n---> Package perl-Time-Local.noarch 0:1.2300-2.el7 will be installed\n---> Package perl-constant.noarch 0:1.27-2.el7 will be installed\n---> Package perl-libs.x86_64 4:5.16.3-295.el7 will be installed\n---> Package perl-macros.x86_64 4:5.16.3-295.el7 will be installed\n---> Package perl-threads.x86_64 0:1.87-4.el7 will be installed\n---> Package perl-threads-shared.x86_64 0:1.43-6.el7 will be installed\n--> Running transaction check\n---> Package perl-Encode.x86_64 0:2.51-7.el7 will be installed\n---> Package perl-Pod-Escapes.noarch 1:1.04-295.el7 will be installed\n---> Package perl-Pod-Perldoc.noarch 0:3.20-4.el7 will be installed\n--> Processing Dependency: perl(parent) for package: perl-Pod-Perldoc-3.20-4.el7.noarch\n--> Processing Dependency: perl(HTTP::Tiny) for package: perl-Pod-Perldoc-3.20-4.el7.noarch\n---> Package perl-podlators.noarch 0:2.5.1-3.el7 will be installed\n--> Running transaction check\n---> Package perl-HTTP-Tiny.noarch 0:0.033-3.el7 will be installed\n---> Package perl-parent.noarch 1:0.225-244.el7 will be installed\n--> Finished Dependency Resolution\n\nDependencies Resolved\n\n================================================================================\n Package                    Arch       Version                Repository   Size\n================================================================================\nInstalling:\n git                        x86_64     1.8.3.1-23.el7_8       updates     4.4 M\nInstalling for dependencies:\n perl                       x86_64     4:5.16.3-295.el7       base        8.0 M\n perl-Carp                  noarch     1.26-244.el7           base         19 k\n perl-Encode                x86_64     2.51-7.el7             base        1.5 M\n perl-Error                 noarch     1:0.17020-2.el7        base         32 k\n perl-Exporter              noarch     5.68-3.el7             base         28 k\n perl-File-Path             noarch     2.09-2.el7             base         26 k\n perl-File-Temp             noarch     0.23.01-3.el7          base         56 k\n perl-Filter                x86_64     1.49-3.el7             base         76 k\n perl-Getopt-Long           noarch     2.40-3.el7             base         56 k\n perl-Git                   noarch     1.8.3.1-23.el7_8       updates      56 k\n perl-HTTP-Tiny             noarch     0.033-3.el7            base         38 k\n perl-PathTools             x86_64     3.40-5.el7             base         82 k\n perl-Pod-Escapes           noarch     1:1.04-295.el7         base         51 k\n perl-Pod-Perldoc           noarch     3.20-4.el7             base         87 k\n perl-Pod-Simple            noarch     1:3.28-4.el7           base        216 k\n perl-Pod-Usage             noarch     1.63-3.el7             base         27 k\n perl-Scalar-List-Utils     x86_64     1.27-248.el7           base         36 k\n perl-Socket                x86_64     2.010-5.el7            base         49 k\n perl-Storable              x86_64     2.45-3.el7             base         77 k\n perl-TermReadKey           x86_64     2.30-20.el7            base         31 k\n perl-Text-ParseWords       noarch     3.29-4.el7             base         14 k\n perl-Time-HiRes            x86_64     4:1.9725-3.el7         base         45 k\n perl-Time-Local            noarch     1.2300-2.el7           base         24 k\n perl-constant              noarch     1.27-2.el7             base         19 k\n perl-libs                  x86_64     4:5.16.3-295.el7       base        689 k\n perl-macros                x86_64     4:5.16.3-295.el7       base         44 k\n perl-parent                noarch     1:0.225-244.el7        base         12 k\n perl-podlators             noarch     2.5.1-3.el7            base        112 k\n perl-threads               x86_64     1.87-4.el7             base         49 k\n perl-threads-shared        x86_64     1.43-6.el7             base         39 k\n\nTransaction Summary\n================================================================================\nInstall  1 Package (+30 Dependent packages)\n\nTotal download size: 16 M\nInstalled size: 59 M\nDownloading packages:\n--------------------------------------------------------------------------------\nTotal                                              2.9 MB/s |  16 MB  00:05     \nRunning transaction check\nRunning transaction test\nTransaction test succeeded\nRunning transaction\n  Installing : 1:perl-parent-0.225-244.el7.noarch                          1/31 \n  Installing : perl-HTTP-Tiny-0.033-3.el7.noarch                           2/31 \n  Installing : perl-podlators-2.5.1-3.el7.noarch                           3/31 \n  Installing : perl-Pod-Perldoc-3.20-4.el7.noarch                          4/31 \n  Installing : 1:perl-Pod-Escapes-1.04-295.el7.noarch                      5/31 \n  Installing : perl-Text-ParseWords-3.29-4.el7.noarch                      6/31 \n  Installing : perl-Encode-2.51-7.el7.x86_64                               7/31 \n  Installing : perl-Pod-Usage-1.63-3.el7.noarch                            8/31 \n  Installing : 4:perl-libs-5.16.3-295.el7.x86_64                           9/31 \n  Installing : 4:perl-macros-5.16.3-295.el7.x86_64                        10/31 \n  Installing : perl-Storable-2.45-3.el7.x86_64                            11/31 \n  Installing : perl-Exporter-5.68-3.el7.noarch                            12/31 \n  Installing : perl-constant-1.27-2.el7.noarch                            13/31 \n  Installing : perl-Socket-2.010-5.el7.x86_64                             14/31 \n  Installing : perl-Time-Local-1.2300-2.el7.noarch                        15/31 \n  Installing : perl-Carp-1.26-244.el7.noarch                              16/31 \n  Installing : 4:perl-Time-HiRes-1.9725-3.el7.x86_64                      17/31 \n  Installing : perl-PathTools-3.40-5.el7.x86_64                           18/31 \n  Installing : perl-Scalar-List-Utils-1.27-248.el7.x86_64                 19/31 \n  Installing : perl-File-Temp-0.23.01-3.el7.noarch                        20/31 \n  Installing : perl-File-Path-2.09-2.el7.noarch                           21/31 \n  Installing : perl-threads-shared-1.43-6.el7.x86_64                      22/31 \n  Installing : perl-threads-1.87-4.el7.x86_64                             23/31 \n  Installing : perl-Filter-1.49-3.el7.x86_64                              24/31 \n  Installing : 1:perl-Pod-Simple-3.28-4.el7.noarch                        25/31 \n  Installing : perl-Getopt-Long-2.40-3.el7.noarch                         26/31 \n  Installing : 4:perl-5.16.3-295.el7.x86_64                               27/31 \n  Installing : 1:perl-Error-0.17020-2.el7.noarch                          28/31 \n  Installing : perl-TermReadKey-2.30-20.el7.x86_64                        29/31 \n  Installing : git-1.8.3.1-23.el7_8.x86_64                                30/31 \n  Installing : perl-Git-1.8.3.1-23.el7_8.noarch                           31/31 \n  Verifying  : perl-HTTP-Tiny-0.033-3.el7.noarch                           1/31 \n  Verifying  : perl-threads-shared-1.43-6.el7.x86_64                       2/31 \n  Verifying  : perl-Storable-2.45-3.el7.x86_64                             3/31 \n  Verifying  : 1:perl-Pod-Escapes-1.04-295.el7.noarch                      4/31 \n  Verifying  : perl-Exporter-5.68-3.el7.noarch                             5/31 \n  Verifying  : perl-constant-1.27-2.el7.noarch                             6/31 \n  Verifying  : perl-PathTools-3.40-5.el7.x86_64                            7/31 \n  Verifying  : perl-Socket-2.010-5.el7.x86_64                              8/31 \n  Verifying  : git-1.8.3.1-23.el7_8.x86_64                                 9/31 \n  Verifying  : 1:perl-parent-0.225-244.el7.noarch                         10/31 \n  Verifying  : perl-TermReadKey-2.30-20.el7.x86_64                        11/31 \n  Verifying  : 4:perl-libs-5.16.3-295.el7.x86_64                          12/31 \n  Verifying  : perl-File-Temp-0.23.01-3.el7.noarch                        13/31 \n  Verifying  : 1:perl-Pod-Simple-3.28-4.el7.noarch                        14/31 \n  Verifying  : perl-Time-Local-1.2300-2.el7.noarch                        15/31 \n  Verifying  : 4:perl-macros-5.16.3-295.el7.x86_64                        16/31 \n  Verifying  : 4:perl-5.16.3-295.el7.x86_64                               17/31 \n  Verifying  : perl-Carp-1.26-244.el7.noarch                              18/31 \n  Verifying  : 1:perl-Error-0.17020-2.el7.noarch                          19/31 \n  Verifying  : 4:perl-Time-HiRes-1.9725-3.el7.x86_64                      20/31 \n  Verifying  : perl-Scalar-List-Utils-1.27-248.el7.x86_64                 21/31 \n  Verifying  : perl-Pod-Usage-1.63-3.el7.noarch                           22/31 \n  Verifying  : perl-Encode-2.51-7.el7.x86_64                              23/31 \n  Verifying  : perl-Pod-Perldoc-3.20-4.el7.noarch                         24/31 \n  Verifying  : perl-podlators-2.5.1-3.el7.noarch                          25/31 \n  Verifying  : perl-File-Path-2.09-2.el7.noarch                           26/31 \n  Verifying  : perl-threads-1.87-4.el7.x86_64                             27/31 \n  Verifying  : perl-Git-1.8.3.1-23.el7_8.noarch                           28/31 \n  Verifying  : perl-Filter-1.49-3.el7.x86_64                              29/31 \n  Verifying  : perl-Getopt-Long-2.40-3.el7.noarch                         30/31 \n  Verifying  : perl-Text-ParseWords-3.29-4.el7.noarch                     31/31 \n\nInstalled:\n  git.x86_64 0:1.8.3.1-23.el7_8                                                 \n\nDependency Installed:\n  perl.x86_64 4:5.16.3-295.el7                                                  \n  perl-Carp.noarch 0:1.26-244.el7                                               \n  perl-Encode.x86_64 0:2.51-7.el7                                               \n  perl-Error.noarch 1:0.17020-2.el7                                             \n  perl-Exporter.noarch 0:5.68-3.el7                                             \n  perl-File-Path.noarch 0:2.09-2.el7                                            \n  perl-File-Temp.noarch 0:0.23.01-3.el7                                         \n  perl-Filter.x86_64 0:1.49-3.el7                                               \n  perl-Getopt-Long.noarch 0:2.40-3.el7                                          \n  perl-Git.noarch 0:1.8.3.1-23.el7_8                                            \n  perl-HTTP-Tiny.noarch 0:0.033-3.el7                                           \n  perl-PathTools.x86_64 0:3.40-5.el7                                            \n  perl-Pod-Escapes.noarch 1:1.04-295.el7                                        \n  perl-Pod-Perldoc.noarch 0:3.20-4.el7                                          \n  perl-Pod-Simple.noarch 1:3.28-4.el7                                           \n  perl-Pod-Usage.noarch 0:1.63-3.el7                                            \n  perl-Scalar-List-Utils.x86_64 0:1.27-248.el7                                  \n  perl-Socket.x86_64 0:2.010-5.el7                                              \n  perl-Storable.x86_64 0:2.45-3.el7                                             \n  perl-TermReadKey.x86_64 0:2.30-20.el7                                         \n  perl-Text-ParseWords.noarch 0:3.29-4.el7                                      \n  perl-Time-HiRes.x86_64 4:1.9725-3.el7                                         \n  perl-Time-Local.noarch 0:1.2300-2.el7                                         \n  perl-constant.noarch 0:1.27-2.el7                                             \n  perl-libs.x86_64 4:5.16.3-295.el7                                             \n  perl-macros.x86_64 4:5.16.3-295.el7                                           \n  perl-parent.noarch 1:0.225-244.el7                                            \n  perl-podlators.noarch 0:2.5.1-3.el7                                           \n  perl-threads.x86_64 0:1.87-4.el7                                              \n  perl-threads-shared.x86_64 0:1.43-6.el7                                       \n\nComplete!\n"
+    ]
+}
+192.168.100.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "changes": {
+        "installed": [
+            "git"
+        ],
+        "updated": []
+    },
+    "msg": "",
+    "rc": 0,
+    "results": [
+        "Loaded plugins: fastestmirror\nLoading mirror speeds from cached hostfile\n * base: mirror.ci.ifes.edu.br\n * extras: ftp.unicamp.br\n * updates: mirror-centos-jpa.hostdime.com.br\nResolving Dependencies\n--> Running transaction check\n---> Package git.x86_64 0:1.8.3.1-23.el7_8 will be installed\n--> Processing Dependency: perl-Git = 1.8.3.1-23.el7_8 for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl >= 5.008 for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(warnings) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(vars) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(strict) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(lib) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(Term::ReadKey) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(Git) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(Getopt::Long) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::stat) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Temp) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Spec) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Path) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Find) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Copy) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(File::Basename) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(Exporter) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: perl(Error) for package: git-1.8.3.1-23.el7_8.x86_64\n--> Processing Dependency: /usr/bin/perl for package: git-1.8.3.1-23.el7_8.x86_64\n--> Running transaction check\n---> Package perl.x86_64 4:5.16.3-295.el7 will be installed\n--> Processing Dependency: perl-libs = 4:5.16.3-295.el7 for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Socket) >= 1.3 for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Scalar::Util) >= 1.10 for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl-macros for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl-libs for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(threads::shared) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(threads) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(constant) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Time::Local) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Time::HiRes) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Storable) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Socket) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Scalar::Util) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Pod::Simple::XHTML) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Pod::Simple::Search) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Filter::Util::Call) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: perl(Carp) for package: 4:perl-5.16.3-295.el7.x86_64\n--> Processing Dependency: libperl.so()(64bit) for package: 4:perl-5.16.3-295.el7.x86_64\n---> Package perl-Error.noarch 1:0.17020-2.el7 will be installed\n---> Package perl-Exporter.noarch 0:5.68-3.el7 will be installed\n---> Package perl-File-Path.noarch 0:2.09-2.el7 will be installed\n---> Package perl-File-Temp.noarch 0:0.23.01-3.el7 will be installed\n---> Package perl-Getopt-Long.noarch 0:2.40-3.el7 will be installed\n--> Processing Dependency: perl(Pod::Usage) >= 1.14 for package: perl-Getopt-Long-2.40-3.el7.noarch\n--> Processing Dependency: perl(Text::ParseWords) for package: perl-Getopt-Long-2.40-3.el7.noarch\n---> Package perl-Git.noarch 0:1.8.3.1-23.el7_8 will be installed\n---> Package perl-PathTools.x86_64 0:3.40-5.el7 will be installed\n---> Package perl-TermReadKey.x86_64 0:2.30-20.el7 will be installed\n--> Running transaction check\n---> Package perl-Carp.noarch 0:1.26-244.el7 will be installed\n---> Package perl-Filter.x86_64 0:1.49-3.el7 will be installed\n---> Package perl-Pod-Simple.noarch 1:3.28-4.el7 will be installed\n--> Processing Dependency: perl(Pod::Escapes) >= 1.04 for package: 1:perl-Pod-Simple-3.28-4.el7.noarch\n--> Processing Dependency: perl(Encode) for package: 1:perl-Pod-Simple-3.28-4.el7.noarch\n---> Package perl-Pod-Usage.noarch 0:1.63-3.el7 will be installed\n--> Processing Dependency: perl(Pod::Text) >= 3.15 for package: perl-Pod-Usage-1.63-3.el7.noarch\n--> Processing Dependency: perl-Pod-Perldoc for package: perl-Pod-Usage-1.63-3.el7.noarch\n---> Package perl-Scalar-List-Utils.x86_64 0:1.27-248.el7 will be installed\n---> Package perl-Socket.x86_64 0:2.010-5.el7 will be installed\n---> Package perl-Storable.x86_64 0:2.45-3.el7 will be installed\n---> Package perl-Text-ParseWords.noarch 0:3.29-4.el7 will be installed\n---> Package perl-Time-HiRes.x86_64 4:1.9725-3.el7 will be installed\n---> Package perl-Time-Local.noarch 0:1.2300-2.el7 will be installed\n---> Package perl-constant.noarch 0:1.27-2.el7 will be installed\n---> Package perl-libs.x86_64 4:5.16.3-295.el7 will be installed\n---> Package perl-macros.x86_64 4:5.16.3-295.el7 will be installed\n---> Package perl-threads.x86_64 0:1.87-4.el7 will be installed\n---> Package perl-threads-shared.x86_64 0:1.43-6.el7 will be installed\n--> Running transaction check\n---> Package perl-Encode.x86_64 0:2.51-7.el7 will be installed\n---> Package perl-Pod-Escapes.noarch 1:1.04-295.el7 will be installed\n---> Package perl-Pod-Perldoc.noarch 0:3.20-4.el7 will be installed\n--> Processing Dependency: perl(parent) for package: perl-Pod-Perldoc-3.20-4.el7.noarch\n--> Processing Dependency: perl(HTTP::Tiny) for package: perl-Pod-Perldoc-3.20-4.el7.noarch\n---> Package perl-podlators.noarch 0:2.5.1-3.el7 will be installed\n--> Running transaction check\n---> Package perl-HTTP-Tiny.noarch 0:0.033-3.el7 will be installed\n---> Package perl-parent.noarch 1:0.225-244.el7 will be installed\n--> Finished Dependency Resolution\n\nDependencies Resolved\n\n================================================================================\n Package                    Arch       Version                Repository   Size\n================================================================================\nInstalling:\n git                        x86_64     1.8.3.1-23.el7_8       updates     4.4 M\nInstalling for dependencies:\n perl                       x86_64     4:5.16.3-295.el7       base        8.0 M\n perl-Carp                  noarch     1.26-244.el7           base         19 k\n perl-Encode                x86_64     2.51-7.el7             base        1.5 M\n perl-Error                 noarch     1:0.17020-2.el7        base         32 k\n perl-Exporter              noarch     5.68-3.el7             base         28 k\n perl-File-Path             noarch     2.09-2.el7             base         26 k\n perl-File-Temp             noarch     0.23.01-3.el7          base         56 k\n perl-Filter                x86_64     1.49-3.el7             base         76 k\n perl-Getopt-Long           noarch     2.40-3.el7             base         56 k\n perl-Git                   noarch     1.8.3.1-23.el7_8       updates      56 k\n perl-HTTP-Tiny             noarch     0.033-3.el7            base         38 k\n perl-PathTools             x86_64     3.40-5.el7             base         82 k\n perl-Pod-Escapes           noarch     1:1.04-295.el7         base         51 k\n perl-Pod-Perldoc           noarch     3.20-4.el7             base         87 k\n perl-Pod-Simple            noarch     1:3.28-4.el7           base        216 k\n perl-Pod-Usage             noarch     1.63-3.el7             base         27 k\n perl-Scalar-List-Utils     x86_64     1.27-248.el7           base         36 k\n perl-Socket                x86_64     2.010-5.el7            base         49 k\n perl-Storable              x86_64     2.45-3.el7             base         77 k\n perl-TermReadKey           x86_64     2.30-20.el7            base         31 k\n perl-Text-ParseWords       noarch     3.29-4.el7             base         14 k\n perl-Time-HiRes            x86_64     4:1.9725-3.el7         base         45 k\n perl-Time-Local            noarch     1.2300-2.el7           base         24 k\n perl-constant              noarch     1.27-2.el7             base         19 k\n perl-libs                  x86_64     4:5.16.3-295.el7       base        689 k\n perl-macros                x86_64     4:5.16.3-295.el7       base         44 k\n perl-parent                noarch     1:0.225-244.el7        base         12 k\n perl-podlators             noarch     2.5.1-3.el7            base        112 k\n perl-threads               x86_64     1.87-4.el7             base         49 k\n perl-threads-shared        x86_64     1.43-6.el7             base         39 k\n\nTransaction Summary\n================================================================================\nInstall  1 Package (+30 Dependent packages)\n\nTotal download size: 16 M\nInstalled size: 59 M\nDownloading packages:\n--------------------------------------------------------------------------------\nTotal                                              2.9 MB/s |  16 MB  00:05     \nRunning transaction check\nRunning transaction test\nTransaction test succeeded\nRunning transaction\n  Installing : 1:perl-parent-0.225-244.el7.noarch                          1/31 \n  Installing : perl-HTTP-Tiny-0.033-3.el7.noarch                           2/31 \n  Installing : perl-podlators-2.5.1-3.el7.noarch                           3/31 \n  Installing : perl-Pod-Perldoc-3.20-4.el7.noarch                          4/31 \n  Installing : 1:perl-Pod-Escapes-1.04-295.el7.noarch                      5/31 \n  Installing : perl-Text-ParseWords-3.29-4.el7.noarch                      6/31 \n  Installing : perl-Encode-2.51-7.el7.x86_64                               7/31 \n  Installing : perl-Pod-Usage-1.63-3.el7.noarch                            8/31 \n  Installing : 4:perl-libs-5.16.3-295.el7.x86_64                           9/31 \n  Installing : 4:perl-macros-5.16.3-295.el7.x86_64                        10/31 \n  Installing : perl-Storable-2.45-3.el7.x86_64                            11/31 \n  Installing : perl-Exporter-5.68-3.el7.noarch                            12/31 \n  Installing : perl-constant-1.27-2.el7.noarch                            13/31 \n  Installing : perl-Socket-2.010-5.el7.x86_64                             14/31 \n  Installing : perl-Time-Local-1.2300-2.el7.noarch                        15/31 \n  Installing : perl-Carp-1.26-244.el7.noarch                              16/31 \n  Installing : 4:perl-Time-HiRes-1.9725-3.el7.x86_64                      17/31 \n  Installing : perl-PathTools-3.40-5.el7.x86_64                           18/31 \n  Installing : perl-Scalar-List-Utils-1.27-248.el7.x86_64                 19/31 \n  Installing : perl-File-Temp-0.23.01-3.el7.noarch                        20/31 \n  Installing : perl-File-Path-2.09-2.el7.noarch                           21/31 \n  Installing : perl-threads-shared-1.43-6.el7.x86_64                      22/31 \n  Installing : perl-threads-1.87-4.el7.x86_64                             23/31 \n  Installing : perl-Filter-1.49-3.el7.x86_64                              24/31 \n  Installing : 1:perl-Pod-Simple-3.28-4.el7.noarch                        25/31 \n  Installing : perl-Getopt-Long-2.40-3.el7.noarch                         26/31 \n  Installing : 4:perl-5.16.3-295.el7.x86_64                               27/31 \n  Installing : 1:perl-Error-0.17020-2.el7.noarch                          28/31 \n  Installing : perl-TermReadKey-2.30-20.el7.x86_64                        29/31 \n  Installing : git-1.8.3.1-23.el7_8.x86_64                                30/31 \n  Installing : perl-Git-1.8.3.1-23.el7_8.noarch                           31/31 \n  Verifying  : perl-HTTP-Tiny-0.033-3.el7.noarch                           1/31 \n  Verifying  : perl-threads-shared-1.43-6.el7.x86_64                       2/31 \n  Verifying  : perl-Storable-2.45-3.el7.x86_64                             3/31 \n  Verifying  : 1:perl-Pod-Escapes-1.04-295.el7.noarch                      4/31 \n  Verifying  : perl-Exporter-5.68-3.el7.noarch                             5/31 \n  Verifying  : perl-constant-1.27-2.el7.noarch                             6/31 \n  Verifying  : perl-PathTools-3.40-5.el7.x86_64                            7/31 \n  Verifying  : perl-Socket-2.010-5.el7.x86_64                              8/31 \n  Verifying  : git-1.8.3.1-23.el7_8.x86_64                                 9/31 \n  Verifying  : 1:perl-parent-0.225-244.el7.noarch                         10/31 \n  Verifying  : perl-TermReadKey-2.30-20.el7.x86_64                        11/31 \n  Verifying  : 4:perl-libs-5.16.3-295.el7.x86_64                          12/31 \n  Verifying  : perl-File-Temp-0.23.01-3.el7.noarch                        13/31 \n  Verifying  : 1:perl-Pod-Simple-3.28-4.el7.noarch                        14/31 \n  Verifying  : perl-Time-Local-1.2300-2.el7.noarch                        15/31 \n  Verifying  : 4:perl-macros-5.16.3-295.el7.x86_64                        16/31 \n  Verifying  : 4:perl-5.16.3-295.el7.x86_64                               17/31 \n  Verifying  : perl-Carp-1.26-244.el7.noarch                              18/31 \n  Verifying  : 1:perl-Error-0.17020-2.el7.noarch                          19/31 \n  Verifying  : 4:perl-Time-HiRes-1.9725-3.el7.x86_64                      20/31 \n  Verifying  : perl-Scalar-List-Utils-1.27-248.el7.x86_64                 21/31 \n  Verifying  : perl-Pod-Usage-1.63-3.el7.noarch                           22/31 \n  Verifying  : perl-Encode-2.51-7.el7.x86_64                              23/31 \n  Verifying  : perl-Pod-Perldoc-3.20-4.el7.noarch                         24/31 \n  Verifying  : perl-podlators-2.5.1-3.el7.noarch                          25/31 \n  Verifying  : perl-File-Path-2.09-2.el7.noarch                           26/31 \n  Verifying  : perl-threads-1.87-4.el7.x86_64                             27/31 \n  Verifying  : perl-Git-1.8.3.1-23.el7_8.noarch                           28/31 \n  Verifying  : perl-Filter-1.49-3.el7.x86_64                              29/31 \n  Verifying  : perl-Getopt-Long-2.40-3.el7.noarch                         30/31 \n  Verifying  : perl-Text-ParseWords-3.29-4.el7.noarch                     31/31 \n\nInstalled:\n  git.x86_64 0:1.8.3.1-23.el7_8                                                 \n\nDependency Installed:\n  perl.x86_64 4:5.16.3-295.el7                                                  \n  perl-Carp.noarch 0:1.26-244.el7                                               \n  perl-Encode.x86_64 0:2.51-7.el7                                               \n  perl-Error.noarch 1:0.17020-2.el7                                             \n  perl-Exporter.noarch 0:5.68-3.el7                                             \n  perl-File-Path.noarch 0:2.09-2.el7                                            \n  perl-File-Temp.noarch 0:0.23.01-3.el7                                         \n  perl-Filter.x86_64 0:1.49-3.el7                                               \n  perl-Getopt-Long.noarch 0:2.40-3.el7                                          \n  perl-Git.noarch 0:1.8.3.1-23.el7_8                                            \n  perl-HTTP-Tiny.noarch 0:0.033-3.el7                                           \n  perl-PathTools.x86_64 0:3.40-5.el7                                            \n  perl-Pod-Escapes.noarch 1:1.04-295.el7                                        \n  perl-Pod-Perldoc.noarch 0:3.20-4.el7                                          \n  perl-Pod-Simple.noarch 1:3.28-4.el7                                           \n  perl-Pod-Usage.noarch 0:1.63-3.el7                                            \n  perl-Scalar-List-Utils.x86_64 0:1.27-248.el7                                  \n  perl-Socket.x86_64 0:2.010-5.el7                                              \n  perl-Storable.x86_64 0:2.45-3.el7                                             \n  perl-TermReadKey.x86_64 0:2.30-20.el7                                         \n  perl-Text-ParseWords.noarch 0:3.29-4.el7                                      \n  perl-Time-HiRes.x86_64 4:1.9725-3.el7                                         \n  perl-Time-Local.noarch 0:1.2300-2.el7                                         \n  perl-constant.noarch 0:1.27-2.el7                                             \n  perl-libs.x86_64 4:5.16.3-295.el7                                             \n  perl-macros.x86_64 4:5.16.3-295.el7                                           \n  perl-parent.noarch 1:0.225-244.el7                                            \n  perl-podlators.noarch 0:2.5.1-3.el7                                           \n  perl-threads.x86_64 0:1.87-4.el7                                              \n  perl-threads-shared.x86_64 0:1.43-6.el7                                       \n\nComplete!\n"
+    ]
+}
+```
+
+### Manage Files and Directories
+
+- Check out file stats
+
+```console
+❯ ansible multi -m stat -a "path=/etc/environment"
+192.168.100.10 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false,
+    "stat": {
+        "atime": 1599577397.3176594,
+        "attr_flags": "",
+        "attributes": [],
+        "block_size": 4096,
+        "blocks": 0,
+        "charset": "binary",
+        "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+        "ctime": 1588284305.321,
+        "dev": 2049,
+        "device_type": 0,
+        "executable": false,
+        "exists": true,
+        "gid": 0,
+        "gr_name": "root",
+        "inode": 561,
+        "isblk": false,
+        "ischr": false,
+        "isdir": false,
+        "isfifo": false,
+        "isgid": false,
+        "islnk": false,
+        "isreg": true,
+        "issock": false,
+        "isuid": false,
+        "mimetype": "inode/x-empty",
+        "mode": "0644",
+        "mtime": 1585715373.0,
+        "nlink": 1,
+        "path": "/etc/environment",
+        "pw_name": "root",
+        "readable": true,
+        "rgrp": true,
+        "roth": true,
+        "rusr": true,
+        "size": 0,
+        "uid": 0,
+        "version": "18446744071705164100",
+        "wgrp": false,
+        "woth": false,
+        "writeable": false,
+        "wusr": true,
+        "xgrp": false,
+        "xoth": false,
+        "xusr": false
+    }
+}
+192.168.100.11 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false,
+    "stat": {
+        "atime": 1599577418.221639,
+        "attr_flags": "",
+        "attributes": [],
+        "block_size": 4096,
+        "blocks": 0,
+        "charset": "binary",
+        "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+        "ctime": 1588284305.321,
+        "dev": 2049,
+        "device_type": 0,
+        "executable": false,
+        "exists": true,
+        "gid": 0,
+        "gr_name": "root",
+        "inode": 561,
+        "isblk": false,
+        "ischr": false,
+        "isdir": false,
+        "isfifo": false,
+        "isgid": false,
+        "islnk": false,
+        "isreg": true,
+        "issock": false,
+        "isuid": false,
+        "mimetype": "inode/x-empty",
+        "mode": "0644",
+        "mtime": 1585715373.0,
+        "nlink": 1,
+        "path": "/etc/environment",
+        "pw_name": "root",
+        "readable": true,
+        "rgrp": true,
+        "roth": true,
+        "rusr": true,
+        "size": 0,
+        "uid": 0,
+        "version": "18446744071705164100",
+        "wgrp": false,
+        "woth": false,
+        "writeable": false,
+        "wusr": true,
+        "xgrp": false,
+        "xoth": false,
+        "xusr": false
+    }
+}
+192.168.100.12 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false,
+    "stat": {
+        "atime": 1599577440.0751424,
+        "attr_flags": "",
+        "attributes": [],
+        "block_size": 4096,
+        "blocks": 0,
+        "charset": "binary",
+        "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+        "ctime": 1588284305.321,
+        "dev": 2049,
+        "device_type": 0,
+        "executable": false,
+        "exists": true,
+        "gid": 0,
+        "gr_name": "root",
+        "inode": 561,
+        "isblk": false,
+        "ischr": false,
+        "isdir": false,
+        "isfifo": false,
+        "isgid": false,
+        "islnk": false,
+        "isreg": true,
+        "issock": false,
+        "isuid": false,
+        "mimetype": "inode/x-empty",
+        "mode": "0644",
+        "mtime": 1585715373.0,
+        "nlink": 1,
+        "path": "/etc/environment",
+        "pw_name": "root",
+        "readable": true,
+        "rgrp": true,
+        "roth": true,
+        "rusr": true,
+        "size": 0,
+        "uid": 0,
+        "version": "18446744071705164100",
+        "wgrp": false,
+        "woth": false,
+        "writeable": false,
+        "wusr": true,
+        "xgrp": false,
+        "xoth": false,
+        "xusr": false
+    }
+}
+```
+
+- Copy a file to the servers
+
+```console
+❯ ansible multi -m copy -a "src=/etc/hosts dest=/tmp/hosts"
+[WARNING]: File '/tmp/hosts' created with default permissions '600'. The previous default was '666'. Specify 'mode' to avoid this warning.
+192.168.100.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "checksum": "44cdbefd0344c0970bf4e68c06d290867f549c51",
+    "dest": "/tmp/hosts",
+    "gid": 1000,
+    "group": "vagrant",
+    "md5sum": "c59fb63d70a5614ac66214fe522ac59c",
+    "mode": "0600",
+    "owner": "vagrant",
+    "secontext": "unconfined_u:object_r:user_home_t:s0",
+    "size": 365,
+    "src": "/home/vagrant/.ansible/tmp/ansible-tmp-1599590296.057927-11847-26037836414350/source",
+    "state": "file",
+    "uid": 1000
+}
+192.168.100.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "checksum": "44cdbefd0344c0970bf4e68c06d290867f549c51",
+    "dest": "/tmp/hosts",
+    "gid": 1000,
+    "group": "vagrant",
+    "md5sum": "c59fb63d70a5614ac66214fe522ac59c",
+    "mode": "0600",
+    "owner": "vagrant",
+    "secontext": "unconfined_u:object_r:user_home_t:s0",
+    "size": 365,
+    "src": "/home/vagrant/.ansible/tmp/ansible-tmp-1599590296.074976-11845-267261549255947/source",
+    "state": "file",
+    "uid": 1000
+}
+192.168.100.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "checksum": "44cdbefd0344c0970bf4e68c06d290867f549c51",
+    "dest": "/tmp/hosts",
+    "gid": 1000,
+    "group": "vagrant",
+    "md5sum": "c59fb63d70a5614ac66214fe522ac59c",
+    "mode": "0600",
+    "owner": "vagrant",
+    "secontext": "unconfined_u:object_r:user_home_t:s0",
+    "size": 365,
+    "src": "/home/vagrant/.ansible/tmp/ansible-tmp-1599590296.08081-11849-17989699328768/source",
+    "state": "file",
+    "uid": 1000
+}
+```
+
+- Retrieve a file from the servers
+
+```console
+❯ ansible multi -m copy -a "src=/etc/hosts dest=/tmp"
+192.168.100.10 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false,
+    "checksum": "44cdbefd0344c0970bf4e68c06d290867f549c51",
+    "dest": "/tmp/hosts",
+    "gid": 1000,
+    "group": "vagrant",
+    "mode": "0600",
+    "owner": "vagrant",
+    "path": "/tmp/hosts",
+    "secontext": "unconfined_u:object_r:user_home_t:s0",
+    "size": 365,
+    "state": "file",
+    "uid": 1000
+}
+192.168.100.11 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false,
+    "checksum": "44cdbefd0344c0970bf4e68c06d290867f549c51",
+    "dest": "/tmp/hosts",
+    "gid": 1000,
+    "group": "vagrant",
+    "mode": "0600",
+    "owner": "vagrant",
+    "path": "/tmp/hosts",
+    "secontext": "unconfined_u:object_r:user_home_t:s0",
+    "size": 365,
+    "state": "file",
+    "uid": 1000
+}
+192.168.100.12 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false,
+    "checksum": "44cdbefd0344c0970bf4e68c06d290867f549c51",
+    "dest": "/tmp/hosts",
+    "gid": 1000,
+    "group": "vagrant",
+    "mode": "0600",
+    "owner": "vagrant",
+    "path": "/tmp/hosts",
+    "secontext": "unconfined_u:object_r:user_home_t:s0",
+    "size": 365,
+    "state": "file",
+    "uid": 1000
+}
+```
+
+#### Create Files and Directories
+
+- Create a directory
+
+```console
+❯ ansible multi -m file -a "dest=/tmp/test mode=644 state=directory"
+192.168.100.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "gid": 1000,
+    "group": "vagrant",
+    "mode": "0644",
+    "owner": "vagrant",
+    "path": "/tmp/test",
+    "secontext": "unconfined_u:object_r:user_tmp_t:s0",
+    "size": 6,
+    "state": "directory",
+    "uid": 1000
+}
+192.168.100.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "gid": 1000,
+    "group": "vagrant",
+    "mode": "0644",
+    "owner": "vagrant",
+    "path": "/tmp/test",
+    "secontext": "unconfined_u:object_r:user_tmp_t:s0",
+    "size": 6,
+    "state": "directory",
+    "uid": 1000
+}
+192.168.100.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "gid": 1000,
+    "group": "vagrant",
+    "mode": "0644",
+    "owner": "vagrant",
+    "path": "/tmp/test",
+    "secontext": "unconfined_u:object_r:user_tmp_t:s0",
+    "size": 6,
+    "state": "directory",
+    "uid": 1000
+}
+```
+
+- Create a symlink
+
+```console
+❯ ansible multi -m file -a "src=/home/vagrant/.bash_profile dest=/tmp/symlink.txt state=link"
+192.168.100.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "dest": "/tmp/symlink.txt",
+    "gid": 1000,
+    "group": "vagrant",
+    "mode": "0777",
+    "owner": "vagrant",
+    "secontext": "unconfined_u:object_r:user_tmp_t:s0",
+    "size": 27,
+    "src": "/home/vagrant/.bash_profile",
+    "state": "link",
+    "uid": 1000
+}
+192.168.100.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "dest": "/tmp/symlink.txt",
+    "gid": 1000,
+    "group": "vagrant",
+    "mode": "0777",
+    "owner": "vagrant",
+    "secontext": "unconfined_u:object_r:user_tmp_t:s0",
+    "size": 27,
+    "src": "/home/vagrant/.bash_profile",
+    "state": "link",
+    "uid": 1000
+}
+192.168.100.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "dest": "/tmp/symlink.txt",
+    "gid": 1000,
+    "group": "vagrant",
+    "mode": "0777",
+    "owner": "vagrant",
+    "secontext": "unconfined_u:object_r:user_tmp_t:s0",
+    "size": 27,
+    "src": "/home/vagrant/.bash_profile",
+    "state": "link",
+    "uid": 1000
+}
+```
+
+#### Delete Directories and Files
+
+- Delete a file, directory, symlink, etc.
+
+```console
+❯ ansible multi -m file -a "path=/tmp/test state=absent"
+192.168.100.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "path": "/tmp/test",
+    "state": "absent"
+}
+192.168.100.10 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "path": "/tmp/test",
+    "state": "absent"
+}
+192.168.100.11 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "path": "/tmp/test",
+    "state": "absent"
+}
+```
