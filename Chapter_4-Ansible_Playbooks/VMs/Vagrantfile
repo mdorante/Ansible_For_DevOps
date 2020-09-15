@@ -6,9 +6,15 @@ Vagrant.configure("2") do |config|
     vb.memory = 256
   end
 
-    # Apache Server 
-    config.vm.define "apache" do |server|
-      server.vm.hostname = "apache.centos7"
-      server.vm.network "private_network", ip: "192.168.100.10"
+    # # Apache Server 
+    # config.vm.define "apache" do |server|
+    #   server.vm.hostname = "apache.centos7"
+    #   server.vm.network "private_network", ip: "192.168.100.10"
+    # end
+
+    # Node.js Server 
+    config.vm.define "nodejs" do |server|
+      server.vm.hostname = "nodejs.centos7"
+      server.vm.network "private_network", ip: "192.168.100.11"
     end
 end
