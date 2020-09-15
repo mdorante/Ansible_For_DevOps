@@ -17,7 +17,7 @@
         group: root
         mode: 0644
       with_items: # the list of variables to iterate through using the {{ item }} syntax
-        - src: ../../config/httpd.conf
+        - src: ../../config/httpd.conf # relative path to the file on my local machine
           dest: /etc/httpd/conf/httpd.conf
         - src: ../../config/httpd-vhosts.conf
           dest: /etc/httpd/conf/httpd-vhosts.conf
