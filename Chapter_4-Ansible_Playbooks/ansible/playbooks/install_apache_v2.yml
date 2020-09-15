@@ -1,0 +1,28 @@
+---
+- hosts: vagrant
+  become: true
+
+  tasks:
+    - name: Install Apache
+      yum:
+        name:
+          - httpd
+          - httpd-devel
+        state: latest
+    - name: Copy configuration files
+      copy:
+        src: "{{ item.src }}" # interpolates values from a list of variables
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        mode: 0644
+      with_items: # the list of variables to iterate through using the {{ item }} syntax
+        - src: ../../config/httpd.conf
+          dest: /etc/httpd/conf/httpd.conf
+        - src: ../../config/httpd-vhosts.conf
+          dest: /etc/httpd/conf/httpd-vhosts.conf
+    - name: Start Apache and configure it to run at boot
+      service:
+        name: httpd
+        state: started
+        enabled: true
