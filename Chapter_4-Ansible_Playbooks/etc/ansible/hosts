@@ -1,8 +1,12 @@
 [apache]
 192.168.100.10
 
+[nodejs]
+192.168.100.11
+
 [vagrant:children]
 apache
+nodejs
 
 [vagrant:vars]
 ansible_ssh_user=vagrant

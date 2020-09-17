@@ -13,3 +13,8 @@ This is not necessary in the revised Ansible Playbook, because we use the `copy`
 ## Real-world playbook: CentOS Node.js app server
 
 In this example, we will configure a CentOS server with Node.js, and install and start a simple Node.js app.
+
+In `ansible/playbooks/nodejs` we have all the files necessary for this example:
+
+- An `app` folder containing the Node.js app server and npm package.json files
+- The ansible playbook that sets everything up and starts the app server

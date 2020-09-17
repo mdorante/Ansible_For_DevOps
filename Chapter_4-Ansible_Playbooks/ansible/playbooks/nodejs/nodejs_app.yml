@@ -1,0 +1,48 @@
+---
+- hosts: nodejs
+  become: true
+
+  vars:
+    node_apps_location: /usr/local/opt/node
+
+  tasks:
+    - name: Install EPEL repo
+      yum:
+        name: epel-release
+        state: latest
+    - name: Import Remi GPG Key
+      rpm_key:
+        key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi"
+        state: present
+    - name: Ensure firewalld is stopped (for testing)
+      service:
+        name: firewalld
+        state: stopped
+    - name: Install Node.js and npm
+      yum:
+        name: npm
+        state: latest
+        enablerepo: epel
+    - name: Install Forever (npm package) globally
+      npm:
+        name: forever
+        global: yes
+        state: latest
+    - name: Ensure Node.js apps folder exists
+      file:
+        path: "{{ node_apps_location }}"
+        state: directory
+    - name: Copy Node.js app
+      copy:
+        src: app
+        dest: "{{ node_apps_location }}"
+    - name: Install app dependencies
+      npm:
+        path: "{{ node_apps_location }}/app"
+    - name: Check list of running Node.js apps
+      command: forever list
+      register: forever_list
+      changed_when: false
+    - name: Start Node.js app
+      command: "forever start {{ node_apps_location }}/app/app.js"
+      when: "forever_list.stdout.find(node_apps_location + '/app/app.js') == -1" # only start the app if it's not already running
