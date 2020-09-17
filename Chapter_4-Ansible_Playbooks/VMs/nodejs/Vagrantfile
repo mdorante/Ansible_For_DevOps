@@ -1,0 +1,14 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+  config.ssh.insert_key = false
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 256
+  end
+
+  # Node.js Server 
+  config.vm.define "nodejs" do |server|
+    server.vm.hostname = "nodejs.centos7"
+    server.vm.network "private_network", ip: "192.168.100.11"
+  end
+end
