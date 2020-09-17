@@ -4,9 +4,13 @@
 [nodejs]
 192.168.100.11
 
+[lamp]
+192.168.100.12
+
 [vagrant:children]
 apache
 nodejs
+lamp
 
 [vagrant:vars]
 ansible_ssh_user=vagrant
